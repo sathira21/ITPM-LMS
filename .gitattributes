@@ -1,0 +1,6 @@
+package-lock.json linguist-generated=true
+frontend/dist/** linguist-generated=true
+backend/seed*.js linguist-generated=true
+backend/migrateProgressIndex.js linguist-generated=true
+frontend/src/pages/SupportTickets/SupportTicketPage.jsx linguist-generated=true
+frontend/src/pages/Courses/CoursesPage.jsx linguist-generated=true
