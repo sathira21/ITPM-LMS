@@ -1,0 +1,26 @@
+﻿*   7c34828 Merge pull request #8 from sathira21/Progress-analysis-and-quizzes
+|\  
+| *   ad3295e Merge branches 'Progress-analysis-and-quizzes' and 'Progress-analysis-and-quizzes' of https://github.com/sathira21/ITPM-LMS into Progress-analysis-and-quizzes
+| |\  
+| * | 74e40b4 Final polish, bug fixes and build artifacts
+| * | c24bb6a Initial setup and project configurations
+* | |   72a84c3 Merge pull request #7 from sathira21/Progress-analysis-and-quizzes
+|\ \ \  
+| | |/  
+| |/|   
+| * | 2ba571d Create main-log.txt
+* | | d6cd101 Merge pull request #6 from sathira21/Progress-analysis-and-quizzes
+|\| | 
+| * |   32b92fc Merge branch 'Progress-analysis-and-quizzes' of https://github.com/sathira21/ITPM-LMS into Progress-analysis-and-quizzes
+| |\ \  
+| * | | 1d12ac7 Final polish, bug fixes and build artifacts
+| * | | bb60a41 Integrations, data seeding, and expanded pages
+| * | | e3ffd27 Frontend core layout, Progress and Quiz UI
+| * | | e17bf54 Backend models, controllers, and core logic
+| * | | fa06f14 Initial setup and project configurations
+* | | |   e7bb471 Merge pull request #5 from sathira21/Progress-analysis-and-quizzes
+|\ \ \ \  
+| | |/ /  
+| |/| |   
+| * | |   1e9bd95 Merge branch 'Progress-analysis-and-quizzes' of https://github.com/sathira21/ITPM-LMS into Progress-analysis-and-quizzes
+| |\ \ \  
