@@ -1,0 +1,138 @@
+﻿commit 579b7dd2c82f5b3506e036038b3a88675cecc00d
+Author: sathira <IT22547842@my.sliit.lk>
+Date:   Wed Mar 25 11:20:00 2026 +0530
+
+    Final polish, bug fixes and build artifacts
+
+ .claude/settings.local.json                        |   30 +
+ backend/.env.example                               |    5 +
+ backend/.gitignore                                 |   42 +
+ backend/package-lock.json                          | 2086 ++++++++++++
+ backend/package.json                               |   26 +
+ frontend/.gitignore                                |   40 +
+ frontend/package-lock.json                         | 3414 ++++++++++++++++++++
+ frontend/package.json                              |   29 +
+ frontend/postcss.config.js                         |    6 +
+ frontend/src/pages/Dashboard/AdminDashboard.jsx    |  164 +
+ frontend/src/pages/Dashboard/GuardianDashboard.jsx |  100 +
+ frontend/src/pages/Dashboard/StudentDashboard.jsx  |  165 +
+ frontend/src/pages/Dashboard/TeacherDashboard.jsx  |   91 +
+ frontend/src/pages/Feedback/FeedbackPage.jsx       |  636 ++++
+ frontend/src/pages/Login.jsx                       |  212 ++
+ frontend/src/pages/Register.jsx                    |  398 +++
+ frontend/src/pages/Reports/ReportForm.jsx          |  186 ++
+ frontend/src/pages/Reports/ReportList.jsx          |  165 +
+ frontend/src/pages/Reports/ReportView.jsx          |  181 ++
+ frontend/src/pages/Users/UserForm.jsx              |  205 ++
+ frontend/src/pages/Users/UserList.jsx              |  406 +++
+ frontend/tailwind.config.js                        |   99 +
+ frontend/vite.config.js                            |   15 +
+ git-log.txt                                        |  140 +
+ git-status.txt                                     |    9 +
+ git-tree.txt                                       |   25 +
+ 26 files changed, 8875 insertions(+)
+
+commit 7cbffff1d0e1e7076695c2143dab305f98c13457
+Author: sathira <IT22547842@my.sliit.lk>
+Date:   Sun Mar 22 16:45:00 2026 +0530
+
+    Integrations, data seeding, and expanded pages
+
+ backend/seed.js                                    |   39 +
+ backend/seedCourses.js                             |  289 +++++
+ backend/seedMaterials.js                           |  330 +++++
+ backend/seedQuizzes.js                             |  537 ++++++++
+ frontend/src/hooks/useProgressTracking.js          |   84 ++
+ frontend/src/pages/Activity/ActivityLog.jsx        |  172 +++
+ frontend/src/pages/Courses/CoursesPage.jsx         | 1143 +++++++++++++++++
+ frontend/src/pages/Groups/GroupDetail.jsx          |  121 ++
+ frontend/src/pages/Groups/GroupList.jsx            |  221 ++++
+ frontend/src/pages/Guardians/GuardianLinks.jsx     |  210 ++++
+ frontend/src/pages/Materials/MaterialsPage.jsx     | 1070 ++++++++++++++++
+ .../src/pages/SupportTickets/SupportTicketPage.jsx | 1304 ++++++++++++++++++++
+ frontend/src/utils/api.js                          |   23 +
+ 13 files changed, 5543 insertions(+)
+
+commit 085f3953f8ee75fe7f2bcb95c1351fe3c30c92cd
+Author: sathira <IT22547842@my.sliit.lk>
+Date:   Wed Mar 18 14:15:00 2026 +0530
+
+    Frontend core layout, Progress and Quiz UI
+
+ frontend/index.html                               |   16 +
+ frontend/src/App.jsx                              |  107 ++
+ frontend/src/components/Layout/Layout.jsx         |   20 +
+ frontend/src/components/Layout/Navbar.jsx         |   99 ++
+ frontend/src/components/Layout/Sidebar.jsx        |  159 +++
+ frontend/src/context/AuthContext.jsx              |   70 ++
+ frontend/src/index.css                            |  455 +++++++++
+ frontend/src/main.jsx                             |   10 +
+ frontend/src/pages/Landing.jsx                    |  858 +++++++++++++++++
+ frontend/src/pages/Progress/ProgressDashboard.jsx | 1072 +++++++++++++++++++++
+ frontend/src/pages/Progress/ProgressPage.jsx      |  760 +++++++++++++++
+ frontend/src/pages/Quiz/QuizPage.jsx              |  919 ++++++++++++++++++
+ 12 files changed, 4545 insertions(+)
+
+commit a09131ff3bf77440213f8cfbb7ace99988a666bc
+Author: sathira <IT22547842@my.sliit.lk>
+Date:   Sat Mar 14 12:30:00 2026 +0530
+
+    Backend models, controllers, and core logic
+
+ backend/config/db.js                           |   13 +
+ backend/controllers/activityController.js      |   80 ++
+ backend/controllers/authController.js          |  153 +++
+ backend/controllers/courseController.js        |  655 +++++++++++++
+ backend/controllers/dashboardController.js     |   84 ++
+ backend/controllers/feedbackController.js      |  166 ++++
+ backend/controllers/groupController.js         |  125 +++
+ backend/controllers/guardianController.js      |  120 +++
+ backend/controllers/materialController.js      |  369 +++++++
+ backend/controllers/notificationController.js  |  275 ++++++
+ backend/controllers/progressController.js      | 1250 ++++++++++++++++++++++++
+ backend/controllers/quizController.js          |  295 ++++++
+ backend/controllers/reportController.js        |  116 +++
+ backend/controllers/supportTicketController.js |  348 +++++++
+ backend/controllers/userController.js          |  159 +++
+ backend/middleware/auth.js                     |   30 +
+ backend/middleware/rbac.js                     |   38 +
+ backend/migrateProgressIndex.js                |   58 ++
+ backend/models/ActivityLog.js                  |   24 +
+ backend/models/ContentProgress.js              |   56 ++
+ backend/models/Course.js                       |   91 ++
+ backend/models/Feedback.js                     |   45 +
+ backend/models/GuardianStudentLink.js          |   38 +
+ backend/models/LearningGroup.js                |   30 +
+ backend/models/Material.js                     |   78 ++
+ backend/models/ProgressNotification.js         |   28 +
+ backend/models/Quiz.js                         |   37 +
+ backend/models/QuizAttempt.js                  |   26 +
+ backend/models/Report.js                       |   32 +
+ backend/models/StudentProgress.js              |   27 +
+ backend/models/SupportTicket.js                |   77 ++
+ backend/models/User.js                         |   64 ++
+ backend/routes/activity.js                     |   11 +
+ backend/routes/auth.js                         |   13 +
+ backend/routes/courses.js                      |   47 +
+ backend/routes/dashboard.js                    |   12 +
+ backend/routes/feedback.js                     |   17 +
+ backend/routes/groups.js                       |   15 +
+ backend/routes/guardians.js                    |   14 +
+ backend/routes/materials.js                    |   57 ++
+ backend/routes/notifications.js                |   10 +
+ backend/routes/progress.js                     |   57 ++
+ backend/routes/quiz.js                         |   21 +
+ backend/routes/reports.js                      |   14 +
+ backend/routes/supportTickets.js               |   46 +
+ backend/routes/users.js                        |   18 +
+ backend/server.js                              |   83 ++
+ 47 files changed, 5422 insertions(+)
+
+commit 0c81828a8d1d156156e8fcad0b68fd9ffc348f98
+Author: sathira <IT22547842@my.sliit.lk>
+Date:   Thu Mar 26 21:29:06 2026 +0530
+
+    Initial commit
+
+ README.md | 1 +
+ 1 file changed, 1 insertion(+)
