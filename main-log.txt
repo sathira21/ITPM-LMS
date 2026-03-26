@@ -1,0 +1,39 @@
+﻿commit e7bb4711d7f77fc7b9d3c703a7fed3d0094e1b98
+Merge: 3ec6581 1e9bd95
+Author: sathira <IT22547842@my.sliit.lk>
+Date:   Fri Mar 27 00:59:59 2026 +0530
+
+    Merge pull request #5 from sathira21/Progress-analysis-and-quizzes
+    
+    Progress analysis and quizzes
+
+commit 1e9bd9526d7d136950b981950c7fffb7b4e31f49
+Merge: 636968c cb4c00d
+Author: sathira <IT22547842@my.sliit.lk>
+Date:   Fri Mar 27 00:58:09 2026 +0530
+
+    Merge branch 'Progress-analysis-and-quizzes' of https://github.com/sathira21/ITPM-LMS into Progress-analysis-and-quizzes
+
+commit 3ec658176c28c1db0f6441394b51db73e2816a63
+Merge: 21d1663 cb4c00d
+Author: sathira <IT22547842@my.sliit.lk>
+Date:   Fri Mar 27 00:53:29 2026 +0530
+
+    Merge pull request #4 from sathira21/Progress-analysis-and-quizzes
+    
+    error issue check
+
+commit cb4c00d7dfd2dd47090603bbf0df7e66503d3ded
+Author: sathira <IT22547842@my.sliit.lk>
+Date:   Fri Mar 27 00:52:16 2026 +0530
+
+    error issue check
+
+commit 21d16637def10c9e9d58adeeb3456c54fa3c7267
+Merge: b183ea8 918b638
+Author: sathira <IT22547842@my.sliit.lk>
+Date:   Fri Mar 27 00:44:58 2026 +0530
+
+    Merge pull request #3 from sathira21/Progress-analysis-and-quizzes
+    
+    Progress analysis and quizzes
