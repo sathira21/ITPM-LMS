@@ -108,7 +108,6 @@ exports.getStats = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
-
 // @route  GET /api/support-tickets
 exports.getTickets = async (req, res) => {
   try {
