@@ -1,6 +1,0 @@
-﻿636968c - Wed Mar 25 11:20:00 2026 +0530 - Final polish, bug fixes and build artifacts
-c2333af - Sun Mar 22 16:45:00 2026 +0530 - Integrations, data seeding, and expanded pages
-6f5eeba - Wed Mar 18 14:15:00 2026 +0530 - Frontend core layout, Progress and Quiz UI
-fe408fe - Sat Mar 14 12:30:00 2026 +0530 - Backend models, controllers, and core logic
-dc6762b - Tue Mar 10 10:00:00 2026 +0530 - Initial setup and project configurations
-0c81828 - Thu Mar 26 21:29:06 2026 +0530 - Initial commit
