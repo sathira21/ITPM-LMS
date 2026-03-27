@@ -220,17 +220,17 @@ const CourseForm = ({ course, onSuccess, onCancel }) => {
 
             <div>
               <label className="label">Credits</label>
-              <input className="input" type="number" min="0" placeholder="e.g. 3" value={form.credits} onChange={set('credits')} />
+              <input className="input" type="number" min="0" placeholder="e.g. 3" value={form.credits} onChange={set('credits')} onKeyDown={(e) => { if (!/[0-9]/.test(e.key) && !['Backspace', 'ArrowLeft', 'ArrowRight', 'Tab', 'Delete', 'Enter'].includes(e.key)) e.preventDefault(); }} />
             </div>
 
             <div>
               <label className="label">Max Students (0 = unlimited)</label>
-              <input className="input" type="number" min="0" placeholder="e.g. 50" value={form.maxStudents} onChange={set('maxStudents')} />
+              <input className="input" type="number" min="0" placeholder="e.g. 50" value={form.maxStudents} onChange={set('maxStudents')} onKeyDown={(e) => { if (!/[0-9]/.test(e.key) && !['Backspace', 'ArrowLeft', 'ArrowRight', 'Tab', 'Delete', 'Enter'].includes(e.key)) e.preventDefault(); }} />
             </div>
 
             <div>
               <label className="label">Academic Year</label>
-              <input className="input" placeholder="e.g. 2025" value={form.academicYear} onChange={set('academicYear')} />
+              <input className="input" type="number" min="1900" max="2100" placeholder="e.g. 2025" value={form.academicYear} onChange={set('academicYear')} onKeyDown={(e) => { if (!/[0-9]/.test(e.key) && !['Backspace', 'ArrowLeft', 'ArrowRight', 'Tab', 'Delete', 'Enter'].includes(e.key)) e.preventDefault(); }} />
             </div>
 
             <div>
