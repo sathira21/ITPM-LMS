@@ -1,3 +1,4 @@
+// UI layout
 import { useEffect, useState, useCallback } from 'react';
 import {
   MessageSquare, Star, Send, Filter, Search, CheckCircle2,
