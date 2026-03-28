@@ -32,12 +32,17 @@ exports.getQuizzes = async (req, res) => {
     ];
 
     const total = await Quiz.countDocuments(query);
-    const quizzes = await Quiz.find(query)
+    const quizzesQuery = Quiz.find(query)
       .populate('createdBy', 'name email')
-      .select('-questions.correctAnswer -questions.explanation')
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(Number(limit));
+
+    if (req.user && req.user.role === 'student') {
+      quizzesQuery.select('-questions.correctAnswer -questions.explanation');
+    }
+
+    const quizzes = await quizzesQuery;
 
     let result = quizzes.map(q => q.toObject());
 
