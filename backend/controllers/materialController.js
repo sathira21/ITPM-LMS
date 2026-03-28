@@ -357,10 +357,10 @@ exports.deleteMaterial = async (req, res) => {
   try {
     const m = await Material.findById(req.params.id);
     if (!m) return res.status(404).json({ success: false, message: 'Not found' });
-    // Delete physical file
-    const filePath = path.join(__dirname, '..', 'uploads', 'materials', m.fileKey);
-    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-    await Material.findByIdAndDelete(req.params.id);
+    // Soft delete
+    m.status = 'deleted';
+    await m.save();
+    
     await log(req.user._id, 'DELETE_MATERIAL', `Deleted: "${m.title}"`, req);
     res.json({ success: true, message: 'Material deleted' });
   } catch (err) {

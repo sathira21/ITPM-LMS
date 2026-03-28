@@ -21,6 +21,7 @@ const STATUS_META = {
   draft:     { color: 'bg-gray-100 text-gray-600 border-gray-200', label: 'Draft', icon: Lock },
   published: { color: 'bg-emerald-100 text-emerald-700 border-emerald-200', label: 'Published', icon: Globe },
   archived:  { color: 'bg-orange-100 text-orange-700 border-orange-200', label: 'Archived', icon: Archive },
+  deleted:   { color: 'bg-red-100 text-red-700 border-red-200', label: 'Deleted', icon: Trash2 },
 };
 
 const TABS = [
@@ -118,9 +119,9 @@ const CourseCard = ({ course, role, onView, onEdit, onEnroll, onPublish, onArchi
                 <Globe size={12} />
               </button>
             )}
-            {role === 'admin' && (
+            {['admin', 'teacher'].includes(role) && (
               <button onClick={() => onDelete(course._id)} className="btn-secondary py-2 text-xs text-red-500 border-red-200 hover:bg-red-50">
-                <Trash2 size={12} />
+                <Trash2 size={12} /> Delete
               </button>
             )}
           </>
@@ -1074,6 +1075,7 @@ export default function CoursesPage() {
                     <option value="draft">Draft</option>
                     <option value="published">Published</option>
                     <option value="archived">Archived</option>
+                    <option value="deleted">Deleted</option>
                   </select>
                 )}
               </div>

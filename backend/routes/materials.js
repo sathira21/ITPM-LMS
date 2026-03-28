@@ -52,6 +52,6 @@ router.put('/:id',                   protect, authorize('admin', 'teacher'), upd
 router.put('/:id/approve',           protect, authorize('admin'), approveMaterial);
 router.put('/:id/archive',           protect, authorize('admin'), archiveMaterial);
 router.put('/:id/restore',           protect, authorize('admin'), restoreMaterial);
-router.delete('/:id',                protect, authorize('admin'), deleteMaterial);
+router.delete('/:id',                protect, authorize('admin', 'teacher'), deleteMaterial);
 
 module.exports = router;
