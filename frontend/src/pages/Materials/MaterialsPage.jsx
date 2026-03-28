@@ -40,6 +40,7 @@ const STATUS_META = {
   pending:  { color: 'bg-amber-100 text-amber-700 border-amber-200',  label: 'Pending Review' },
   approved: { color: 'bg-emerald-100 text-emerald-700 border-emerald-200', label: 'Published' },
   archived: { color: 'bg-gray-100 text-gray-500 border-gray-200',     label: 'Archived' },
+  deleted:  { color: 'bg-red-100 text-red-700 border-red-200',        label: 'Deleted' },
 };
 
 const fmtSize = (bytes) => {
@@ -212,9 +213,9 @@ const MaterialCard = ({ m, onDownload, onApprove, onArchive, onRestore, onDelete
             <RotateCcw size={12} /> Restore
           </button>
         )}
-        {role === 'admin' && (
+        {['admin', 'teacher'].includes(role) && (
           <button onClick={() => onDelete(m._id)} className="btn-secondary py-2 text-xs text-red-500 border-red-200 hover:bg-red-50">
-            <Trash2 size={12} />
+            <Trash2 size={12} /> Delete
           </button>
         )}
       </div>
@@ -930,7 +931,7 @@ export default function MaterialsPage() {
           {tab === 'moderation' && (
             <div className="card py-4">
               <div className="flex flex-wrap gap-2">
-                {['pending', 'approved', 'archived'].map((s) => (
+                {['pending', 'approved', 'archived', 'deleted'].map((s) => (
                   <button
                     key={s}
                     onClick={() => { setFilterStatus(s); setPage(1); }}
@@ -938,6 +939,7 @@ export default function MaterialsPage() {
                       filterStatus === s
                         ? s === 'pending'   ? 'bg-amber-500 text-white border-amber-500'
                           : s === 'approved' ? 'bg-emerald-600 text-white border-emerald-600'
+                          : s === 'deleted' ? 'bg-red-600 text-white border-red-600'
                           : 'bg-gray-600 text-white border-gray-600'
                         : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                     }`}

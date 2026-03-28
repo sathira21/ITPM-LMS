@@ -22,7 +22,7 @@ router.post('/',               protect, authorize('admin', 'teacher'), createCou
 router.put('/:id',             protect, authorize('admin', 'teacher'), updateCourse);
 router.put('/:id/publish',     protect, authorize('admin', 'teacher'), publishCourse);
 router.put('/:id/archive',     protect, authorize('admin'), archiveCourse);
-router.delete('/:id',          protect, authorize('admin'), deleteCourse);
+router.delete('/:id',          protect, authorize('admin', 'teacher'), deleteCourse);
 
 // ─── Module Management ───
 router.post('/:id/modules',              protect, authorize('admin', 'teacher'), addModule);

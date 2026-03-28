@@ -291,7 +291,8 @@ exports.deleteCourse = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Course not found' });
     }
 
-    await Course.findByIdAndDelete(req.params.id);
+    course.status = 'deleted';
+    await course.save();
     await log(req.user._id, 'DELETE_COURSE', `Deleted course: ${course.title}`, req);
 
     res.json({ success: true, message: 'Course deleted' });
