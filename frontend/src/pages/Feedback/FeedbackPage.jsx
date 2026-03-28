@@ -11,7 +11,7 @@ import {
 } from 'recharts';
 import api from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
-
+//feedback categories for students and teachers
 /* ── helpers ── */
 const CATEGORIES = [
   { value: 'lesson',   label: 'Lesson',    icon: BookOpen,       color: 'bg-blue-100 text-blue-700 border-blue-200' },
