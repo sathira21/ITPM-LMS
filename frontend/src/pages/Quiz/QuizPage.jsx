@@ -28,7 +28,7 @@ function ScoreBadge({ pct }) {
 }
 
 // ─── Quiz Card ────────────────────────────────────────────────────────────────
-function QuizCard({ quiz, onTake, onEdit, onDelete, onPublish, isTeacher }) {
+function QuizCard({ quiz, onTake, onEdit, onDelete, onPublish, onPreview, isTeacher }) {
   const canEdit = isTeacher;
   const attempted = quiz.attemptCount > 0;
   const canRetake = quiz.allowRetake && (quiz.maxAttempts === 0 || quiz.attemptCount < quiz.maxAttempts);
@@ -49,10 +49,13 @@ function QuizCard({ quiz, onTake, onEdit, onDelete, onPublish, isTeacher }) {
           </div>
           {canEdit && (
             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button onClick={(e) => { e.stopPropagation(); onEdit(quiz); }} className="w-7 h-7 rounded-lg bg-gray-100 hover:bg-blue-100 flex items-center justify-center text-gray-500 hover:text-blue-600 transition-colors">
+              <button onClick={(e) => { e.stopPropagation(); onPreview(quiz); }} className="w-7 h-7 rounded-lg bg-gray-100 hover:bg-emerald-100 flex items-center justify-center text-gray-500 hover:text-emerald-600 transition-colors" title="Preview">
+                <Eye size={12} />
+              </button>
+              <button onClick={(e) => { e.stopPropagation(); onEdit(quiz); }} className="w-7 h-7 rounded-lg bg-gray-100 hover:bg-blue-100 flex items-center justify-center text-gray-500 hover:text-blue-600 transition-colors" title="Edit">
                 <Pencil size={12} />
               </button>
-              <button onClick={(e) => { e.stopPropagation(); onDelete(quiz._id); }} className="w-7 h-7 rounded-lg bg-gray-100 hover:bg-red-100 flex items-center justify-center text-gray-500 hover:text-red-600 transition-colors">
+              <button onClick={(e) => { e.stopPropagation(); onDelete(quiz._id); }} className="w-7 h-7 rounded-lg bg-gray-100 hover:bg-red-100 flex items-center justify-center text-gray-500 hover:text-red-600 transition-colors" title="Delete">
                 <Trash2 size={12} />
               </button>
             </div>
@@ -297,6 +300,89 @@ function QuizResults({ attempt, quiz, onClose, onRetake, canRetake }) {
               </button>
             )}
             <button onClick={onClose} className="btn-primary flex-1">Done</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Quiz Preview ─────────────────────────────────────────────────────────────
+function QuizPreview({ quiz, onClose }) {
+  return (
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-start justify-center overflow-y-auto p-4">
+      <div className="w-full max-w-2xl my-8">
+        <div className="bg-gradient-to-r from-primary-600 to-purple-600 rounded-t-3xl p-5 text-white flex justify-between items-center">
+          <div>
+            <h2 className="font-bold text-lg">{quiz.title} <span className="text-white/80 text-sm font-medium ml-2 border border-white/20 bg-white/10 px-2 py-0.5 rounded-md">Preview</span></h2>
+            <p className="text-white/70 text-sm mt-1">
+              {[quiz.subject, quiz.module].filter(Boolean).join(' · ')} | {quiz.questions?.length || 0} Questions
+            </p>
+          </div>
+          <button onClick={onClose} className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors">
+            <X size={16} />
+          </button>
+        </div>
+        
+        <div className="bg-white rounded-b-3xl p-5 space-y-5 shadow-xl">
+          {quiz.questions?.map((q, idx) => (
+            <div key={q._id || idx} className="p-4 rounded-2xl border-2 border-gray-100 bg-gray-50/50">
+              <div className="flex items-start gap-3 mb-3">
+                <span className="w-6 h-6 rounded-full bg-gradient-to-br from-primary-500 to-purple-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">{idx + 1}</span>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-gray-800">{q.question}</p>
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium mt-1 inline-block ${TYPE_COLORS[q.type]}`}>{TYPE_LABELS[q.type]} · {q.points} pt{q.points !== 1 ? 's' : ''}</span>
+                </div>
+              </div>
+
+              {q.type === 'mcq' && (
+                <div className="space-y-2 ml-9">
+                  {q.options.map((opt, oi) => {
+                    const isCorrect = String(q.correctAnswer) === String(oi);
+                    return (
+                      <div key={oi} className={`flex items-center gap-3 p-2.5 rounded-xl border ${isCorrect ? 'border-emerald-200 bg-emerald-50' : 'border-gray-100 bg-white'}`}>
+                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${isCorrect ? 'border-emerald-500 bg-emerald-500' : 'border-gray-300'}`}>
+                          {isCorrect && <Check size={10} className="text-white" />}
+                        </div>
+                        <span className={`text-sm ${isCorrect ? 'text-emerald-700 font-medium' : 'text-gray-700'}`}>{opt}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {q.type === 'true_false' && (
+                <div className="flex gap-3 ml-9">
+                  {['true', 'false'].map(val => {
+                    const isCorrect = String(q.correctAnswer) === val;
+                    return (
+                      <div key={val} className={`flex-1 flex items-center justify-center gap-2 p-2.5 rounded-xl border font-medium text-sm ${isCorrect ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-gray-100 bg-white text-gray-600'}`}>
+                        {val === 'true' ? <Check size={14} /> : <X size={14} />}
+                        {val === 'true' ? 'True' : 'False'}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {q.type === 'short_answer' && (
+                <div className="ml-9 p-3 rounded-xl border border-emerald-200 bg-emerald-50">
+                  <p className="text-xs text-emerald-600 font-bold mb-1">Correct Answer:</p>
+                  <p className="text-sm text-emerald-800 font-medium">{q.correctAnswer}</p>
+                </div>
+              )}
+              
+              {q.explanation && (
+                <div className="ml-9 mt-3 p-3 rounded-xl bg-blue-50/50 border border-blue-100 text-sm text-blue-800">
+                  <strong className="text-blue-600 text-xs uppercase tracking-wider block mb-1">Explanation</strong>
+                  {q.explanation}
+                </div>
+              )}
+            </div>
+          ))}
+
+          <div className="pt-2">
+            <button onClick={onClose} className="btn-primary w-full py-3">Close Preview</button>
           </div>
         </div>
       </div>
@@ -655,6 +741,7 @@ export default function QuizPage() {
   const [results, setResults] = useState(null);        // { attempt, quiz }
   const [forming, setForming] = useState(null);        // null | {} | quiz object
   const [analytics, setAnalytics] = useState(null);   // { quizId, quizTitle }
+  const [previewing, setPreviewing] = useState(null);  // quiz object
 
   // Student history
   const [myAttempts, setMyAttempts] = useState([]);
@@ -846,6 +933,7 @@ export default function QuizPage() {
                   onEdit={setForming}
                   onDelete={handleDelete}
                   onPublish={handlePublish}
+                  onPreview={setPreviewing}
                   isTeacher={isTeacher}
                 />
               ))}
@@ -916,6 +1004,7 @@ export default function QuizPage() {
       )}
 
       {/* Modals */}
+      {previewing && <QuizPreview quiz={previewing} onClose={() => setPreviewing(null)} />}
       {taking && <QuizTaker quiz={taking} onClose={() => setTaking(null)} onSubmit={handleSubmitAttempt} />}
       {results && (
         <QuizResults
