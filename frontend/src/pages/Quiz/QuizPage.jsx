@@ -341,8 +341,8 @@ function QuestionRow({ q, idx, onChange, onRemove }) {
           {(q.options || ['', '', '', '']).map((opt, oi) => (
             <div key={oi} className="flex gap-2 items-center">
               <button onClick={() => onChange(idx, 'correctAnswer', String(oi))}
-                className={`w-5 h-5 rounded-full border-2 flex-shrink-0 transition-all ${q.correctAnswer === String(oi) ? 'border-emerald-500 bg-emerald-500' : 'border-gray-300 hover:border-gray-400'}`}>
-                {q.correctAnswer === String(oi) && <Check size={10} className="text-white mx-auto" />}
+                className={`w-5 h-5 rounded-full border-2 flex-shrink-0 transition-all ${String(q.correctAnswer) === String(oi) ? 'border-emerald-500 bg-emerald-500' : 'border-gray-300 hover:border-gray-400'}`}>
+                {String(q.correctAnswer) === String(oi) && <Check size={10} className="text-white mx-auto" />}
               </button>
               <input type="text" value={opt} onChange={e => { const opts = [...(q.options || ['', '', '', ''])]; opts[oi] = e.target.value; onChange(idx, 'options', opts); }}
                 placeholder={`Option ${oi + 1}`} className="input flex-1 text-sm py-1.5" />
@@ -356,7 +356,7 @@ function QuestionRow({ q, idx, onChange, onRemove }) {
         <div className="flex gap-3">
           {['true', 'false'].map(val => (
             <button key={val} onClick={() => onChange(idx, 'correctAnswer', val)}
-              className={`flex-1 py-2 rounded-xl text-sm font-semibold border transition-all ${q.correctAnswer === val ? (val === 'true' ? 'border-emerald-400 bg-emerald-50 text-emerald-700' : 'border-red-400 bg-red-50 text-red-700') : 'border-gray-200 bg-white text-gray-500'}`}>
+              className={`flex-1 py-2 rounded-xl text-sm font-semibold border transition-all ${String(q.correctAnswer) === val ? (val === 'true' ? 'border-emerald-400 bg-emerald-50 text-emerald-700' : 'border-red-400 bg-red-50 text-red-700') : 'border-gray-200 bg-white text-gray-500'}`}>
               {val === 'true' ? '✓ True' : '✗ False'}
             </button>
           ))}
@@ -389,7 +389,7 @@ const emptyQuestion = () => ({ type: 'mcq', question: '', options: ['', '', '', 
 function QuizForm({ initial, onSave, onClose }) {
   const [form, setForm] = useState(initial || {
     title: '', description: '', subject: '', module: '',
-    timeLimit: 0, passingScore: 60, allowRetake: true, maxAttempts: 3,
+    timeLimit: 30, passingScore: 60, allowRetake: true, maxAttempts: 3,
     questions: [emptyQuestion()],
   });
   const [saving, setSaving] = useState(false);
@@ -407,10 +407,23 @@ function QuizForm({ initial, onSave, onClose }) {
 
   const handleSave = async () => {
     if (!form.title.trim()) return setError('Quiz title is required');
+    if (!form.subject.trim()) return setError('Subject is required');
+    if (!form.module.trim()) return setError('Module / Topic is required');
+    if (form.timeLimit <= 0) return setError('Time limit must be greater than 0');
     if (!form.questions.length) return setError('Add at least one question');
     for (const q of form.questions) {
       if (!q.question.trim()) return setError('All questions need text');
-      if (!q.correctAnswer && q.type !== 'short_answer') return setError('Set correct answer for all questions');
+      if (q.type === 'mcq') {
+        const validOptions = (q.options || []).filter(o => o.trim() !== '');
+        if (validOptions.length < 2) return setError('MCQ questions must have at least two valid options');
+        if (q.correctAnswer !== '' && q.correctAnswer !== undefined && q.correctAnswer !== null) {
+          const selectedOption = q.options[Number(q.correctAnswer)];
+          if (!selectedOption || !selectedOption.trim()) return setError('The selected correct answer cannot be empty');
+        }
+      }
+      if ((q.correctAnswer === '' || q.correctAnswer === undefined || q.correctAnswer === null) && q.type !== 'short_answer') {
+        return setError('Set correct answer for all questions');
+      }
     }
     setSaving(true); setError('');
     try { await onSave(form); }
@@ -438,11 +451,11 @@ function QuizForm({ initial, onSave, onClose }) {
             <textarea value={form.description} onChange={e => set('description', e.target.value)} rows={2} className="input w-full resize-none text-sm" placeholder="Description (optional)" />
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="label">Subject</label>
+                <label className="label">Subject *</label>
                 <input value={form.subject} onChange={e => set('subject', e.target.value)} className="input w-full" placeholder="e.g. Mathematics" />
               </div>
               <div>
-                <label className="label">Module / Topic</label>
+                <label className="label">Module / Topic *</label>
                 <input value={form.module} onChange={e => set('module', e.target.value)} className="input w-full" placeholder="e.g. Week 3 – Algebra" />
               </div>
             </div>
@@ -452,7 +465,7 @@ function QuizForm({ initial, onSave, onClose }) {
           <div className="grid grid-cols-3 gap-3 p-4 bg-gray-50 rounded-2xl">
             <div>
               <label className="label">Time Limit (min)</label>
-              <input type="number" min={0} value={form.timeLimit} onChange={e => set('timeLimit', Number(e.target.value))} className="input w-full text-sm" placeholder="0 = unlimited" />
+              <input type="number" min={1} value={form.timeLimit || ''} onChange={e => set('timeLimit', Number(e.target.value))} className="input w-full text-sm" placeholder="e.g. 30" />
             </div>
             <div>
               <label className="label">Passing Score (%)</label>
