@@ -48,7 +48,11 @@ const materialSchema = new mongoose.Schema(
     uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     status: {
       type: String,
+<<<<<<< HEAD
       enum: ['pending', 'approved', 'archived', 'deleted'],
+=======
+      enum: ['pending', 'approved', 'archived'],
+>>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
       default: 'pending',
     },
     approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
