@@ -28,15 +28,7 @@ function ScoreBadge({ pct }) {
 }
 
 // ─── Quiz Card ────────────────────────────────────────────────────────────────
-<<<<<<< HEAD
 function QuizCard({ quiz, onTake, onEdit, onDelete, onPublish, onPreview, isTeacher }) {
-=======
-<<<<<<< HEAD
-function QuizCard({ quiz, onTake, onEdit, onDelete, onPublish, isTeacher }) {
-=======
-function QuizCard({ quiz, onTake, onEdit, onDelete, onPublish, onPreview, isTeacher }) {
->>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
->>>>>>> origin/main
   const canEdit = isTeacher;
   const attempted = quiz.attemptCount > 0;
   const canRetake = quiz.allowRetake && (quiz.maxAttempts === 0 || quiz.attemptCount < quiz.maxAttempts);
@@ -57,15 +49,6 @@ function QuizCard({ quiz, onTake, onEdit, onDelete, onPublish, onPreview, isTeac
           </div>
           {canEdit && (
             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-              <button onClick={(e) => { e.stopPropagation(); onEdit(quiz); }} className="w-7 h-7 rounded-lg bg-gray-100 hover:bg-blue-100 flex items-center justify-center text-gray-500 hover:text-blue-600 transition-colors">
-                <Pencil size={12} />
-              </button>
-              <button onClick={(e) => { e.stopPropagation(); onDelete(quiz._id); }} className="w-7 h-7 rounded-lg bg-gray-100 hover:bg-red-100 flex items-center justify-center text-gray-500 hover:text-red-600 transition-colors">
-=======
->>>>>>> origin/main
               <button onClick={(e) => { e.stopPropagation(); onPreview(quiz); }} className="w-7 h-7 rounded-lg bg-gray-100 hover:bg-emerald-100 flex items-center justify-center text-gray-500 hover:text-emerald-600 transition-colors" title="Preview">
                 <Eye size={12} />
               </button>
@@ -73,10 +56,6 @@ function QuizCard({ quiz, onTake, onEdit, onDelete, onPublish, onPreview, isTeac
                 <Pencil size={12} />
               </button>
               <button onClick={(e) => { e.stopPropagation(); onDelete(quiz._id); }} className="w-7 h-7 rounded-lg bg-gray-100 hover:bg-red-100 flex items-center justify-center text-gray-500 hover:text-red-600 transition-colors" title="Delete">
-<<<<<<< HEAD
-=======
->>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
->>>>>>> origin/main
                 <Trash2 size={12} />
               </button>
             </div>
@@ -328,11 +307,6 @@ function QuizResults({ attempt, quiz, onClose, onRetake, canRetake }) {
   );
 }
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
->>>>>>> origin/main
 // ─── Quiz Preview ─────────────────────────────────────────────────────────────
 function QuizPreview({ quiz, onClose }) {
   return (
@@ -416,10 +390,6 @@ function QuizPreview({ quiz, onClose }) {
   );
 }
 
-<<<<<<< HEAD
-=======
->>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
->>>>>>> origin/main
 // ─── Question Builder (inside Quiz Form) ──────────────────────────────────────
 function QuestionRow({ q, idx, onChange, onRemove }) {
   return (
@@ -457,18 +427,8 @@ function QuestionRow({ q, idx, onChange, onRemove }) {
           {(q.options || ['', '', '', '']).map((opt, oi) => (
             <div key={oi} className="flex gap-2 items-center">
               <button onClick={() => onChange(idx, 'correctAnswer', String(oi))}
-<<<<<<< HEAD
                 className={`w-5 h-5 rounded-full border-2 flex-shrink-0 transition-all ${String(q.correctAnswer) === String(oi) ? 'border-emerald-500 bg-emerald-500' : 'border-gray-300 hover:border-gray-400'}`}>
                 {String(q.correctAnswer) === String(oi) && <Check size={10} className="text-white mx-auto" />}
-=======
-<<<<<<< HEAD
-                className={`w-5 h-5 rounded-full border-2 flex-shrink-0 transition-all ${q.correctAnswer === String(oi) ? 'border-emerald-500 bg-emerald-500' : 'border-gray-300 hover:border-gray-400'}`}>
-                {q.correctAnswer === String(oi) && <Check size={10} className="text-white mx-auto" />}
-=======
-                className={`w-5 h-5 rounded-full border-2 flex-shrink-0 transition-all ${String(q.correctAnswer) === String(oi) ? 'border-emerald-500 bg-emerald-500' : 'border-gray-300 hover:border-gray-400'}`}>
-                {String(q.correctAnswer) === String(oi) && <Check size={10} className="text-white mx-auto" />}
->>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
->>>>>>> origin/main
               </button>
               <input type="text" value={opt} onChange={e => { const opts = [...(q.options || ['', '', '', ''])]; opts[oi] = e.target.value; onChange(idx, 'options', opts); }}
                 placeholder={`Option ${oi + 1}`} className="input flex-1 text-sm py-1.5" />
@@ -482,15 +442,7 @@ function QuestionRow({ q, idx, onChange, onRemove }) {
         <div className="flex gap-3">
           {['true', 'false'].map(val => (
             <button key={val} onClick={() => onChange(idx, 'correctAnswer', val)}
-<<<<<<< HEAD
               className={`flex-1 py-2 rounded-xl text-sm font-semibold border transition-all ${String(q.correctAnswer) === val ? (val === 'true' ? 'border-emerald-400 bg-emerald-50 text-emerald-700' : 'border-red-400 bg-red-50 text-red-700') : 'border-gray-200 bg-white text-gray-500'}`}>
-=======
-<<<<<<< HEAD
-              className={`flex-1 py-2 rounded-xl text-sm font-semibold border transition-all ${q.correctAnswer === val ? (val === 'true' ? 'border-emerald-400 bg-emerald-50 text-emerald-700' : 'border-red-400 bg-red-50 text-red-700') : 'border-gray-200 bg-white text-gray-500'}`}>
-=======
-              className={`flex-1 py-2 rounded-xl text-sm font-semibold border transition-all ${String(q.correctAnswer) === val ? (val === 'true' ? 'border-emerald-400 bg-emerald-50 text-emerald-700' : 'border-red-400 bg-red-50 text-red-700') : 'border-gray-200 bg-white text-gray-500'}`}>
->>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
->>>>>>> origin/main
               {val === 'true' ? '✓ True' : '✗ False'}
             </button>
           ))}
@@ -523,15 +475,7 @@ const emptyQuestion = () => ({ type: 'mcq', question: '', options: ['', '', '', 
 function QuizForm({ initial, onSave, onClose }) {
   const [form, setForm] = useState(initial || {
     title: '', description: '', subject: '', module: '',
-<<<<<<< HEAD
     timeLimit: 30, passingScore: 60, allowRetake: true, maxAttempts: 3,
-=======
-<<<<<<< HEAD
-    timeLimit: 0, passingScore: 60, allowRetake: true, maxAttempts: 3,
-=======
-    timeLimit: 30, passingScore: 60, allowRetake: true, maxAttempts: 3,
->>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
->>>>>>> origin/main
     questions: [emptyQuestion()],
   });
   const [saving, setSaving] = useState(false);
@@ -549,15 +493,6 @@ function QuizForm({ initial, onSave, onClose }) {
 
   const handleSave = async () => {
     if (!form.title.trim()) return setError('Quiz title is required');
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-    if (!form.questions.length) return setError('Add at least one question');
-    for (const q of form.questions) {
-      if (!q.question.trim()) return setError('All questions need text');
-      if (!q.correctAnswer && q.type !== 'short_answer') return setError('Set correct answer for all questions');
-=======
->>>>>>> origin/main
     if (!form.subject.trim()) return setError('Subject is required');
     if (!form.module.trim()) return setError('Module / Topic is required');
     if (form.timeLimit <= 0) return setError('Time limit must be greater than 0');
@@ -575,10 +510,6 @@ function QuizForm({ initial, onSave, onClose }) {
       if ((q.correctAnswer === '' || q.correctAnswer === undefined || q.correctAnswer === null) && q.type !== 'short_answer') {
         return setError('Set correct answer for all questions');
       }
-<<<<<<< HEAD
-=======
->>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
->>>>>>> origin/main
     }
     setSaving(true); setError('');
     try { await onSave(form); }
@@ -606,25 +537,11 @@ function QuizForm({ initial, onSave, onClose }) {
             <textarea value={form.description} onChange={e => set('description', e.target.value)} rows={2} className="input w-full resize-none text-sm" placeholder="Description (optional)" />
             <div className="grid grid-cols-2 gap-3">
               <div>
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-                <label className="label">Subject</label>
-                <input value={form.subject} onChange={e => set('subject', e.target.value)} className="input w-full" placeholder="e.g. Mathematics" />
-              </div>
-              <div>
-                <label className="label">Module / Topic</label>
-=======
->>>>>>> origin/main
                 <label className="label">Subject *</label>
                 <input value={form.subject} onChange={e => set('subject', e.target.value)} className="input w-full" placeholder="e.g. Mathematics" />
               </div>
               <div>
                 <label className="label">Module / Topic *</label>
-<<<<<<< HEAD
-=======
->>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
->>>>>>> origin/main
                 <input value={form.module} onChange={e => set('module', e.target.value)} className="input w-full" placeholder="e.g. Week 3 – Algebra" />
               </div>
             </div>
@@ -634,15 +551,7 @@ function QuizForm({ initial, onSave, onClose }) {
           <div className="grid grid-cols-3 gap-3 p-4 bg-gray-50 rounded-2xl">
             <div>
               <label className="label">Time Limit (min)</label>
-<<<<<<< HEAD
               <input type="number" min={1} value={form.timeLimit || ''} onChange={e => set('timeLimit', Number(e.target.value))} className="input w-full text-sm" placeholder="e.g. 30" />
-=======
-<<<<<<< HEAD
-              <input type="number" min={0} value={form.timeLimit} onChange={e => set('timeLimit', Number(e.target.value))} className="input w-full text-sm" placeholder="0 = unlimited" />
-=======
-              <input type="number" min={1} value={form.timeLimit || ''} onChange={e => set('timeLimit', Number(e.target.value))} className="input w-full text-sm" placeholder="e.g. 30" />
->>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
->>>>>>> origin/main
             </div>
             <div>
               <label className="label">Passing Score (%)</label>
@@ -832,14 +741,7 @@ export default function QuizPage() {
   const [results, setResults] = useState(null);        // { attempt, quiz }
   const [forming, setForming] = useState(null);        // null | {} | quiz object
   const [analytics, setAnalytics] = useState(null);   // { quizId, quizTitle }
-<<<<<<< HEAD
   const [previewing, setPreviewing] = useState(null);  // quiz object
-=======
-<<<<<<< HEAD
-=======
-  const [previewing, setPreviewing] = useState(null);  // quiz object
->>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
->>>>>>> origin/main
 
   // Student history
   const [myAttempts, setMyAttempts] = useState([]);
@@ -1031,14 +933,7 @@ export default function QuizPage() {
                   onEdit={setForming}
                   onDelete={handleDelete}
                   onPublish={handlePublish}
-<<<<<<< HEAD
                   onPreview={setPreviewing}
-=======
-<<<<<<< HEAD
-=======
-                  onPreview={setPreviewing}
->>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
->>>>>>> origin/main
                   isTeacher={isTeacher}
                 />
               ))}
@@ -1109,14 +1004,7 @@ export default function QuizPage() {
       )}
 
       {/* Modals */}
-<<<<<<< HEAD
       {previewing && <QuizPreview quiz={previewing} onClose={() => setPreviewing(null)} />}
-=======
-<<<<<<< HEAD
-=======
-      {previewing && <QuizPreview quiz={previewing} onClose={() => setPreviewing(null)} />}
->>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
->>>>>>> origin/main
       {taking && <QuizTaker quiz={taking} onClose={() => setTaking(null)} onSubmit={handleSubmitAttempt} />}
       {results && (
         <QuizResults
