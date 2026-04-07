@@ -40,10 +40,7 @@ const STATUS_META = {
   pending:  { color: 'bg-amber-100 text-amber-700 border-amber-200',  label: 'Pending Review' },
   approved: { color: 'bg-emerald-100 text-emerald-700 border-emerald-200', label: 'Published' },
   archived: { color: 'bg-gray-100 text-gray-500 border-gray-200',     label: 'Archived' },
-<<<<<<< HEAD
   deleted:  { color: 'bg-red-100 text-red-700 border-red-200',        label: 'Deleted' },
-=======
->>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
 };
 
 const fmtSize = (bytes) => {
@@ -216,15 +213,9 @@ const MaterialCard = ({ m, onDownload, onApprove, onArchive, onRestore, onDelete
             <RotateCcw size={12} /> Restore
           </button>
         )}
-<<<<<<< HEAD
         {['admin', 'teacher'].includes(role) && (
           <button onClick={() => onDelete(m._id)} className="btn-secondary py-2 text-xs text-red-500 border-red-200 hover:bg-red-50">
             <Trash2 size={12} /> Delete
-=======
-        {role === 'admin' && (
-          <button onClick={() => onDelete(m._id)} className="btn-secondary py-2 text-xs text-red-500 border-red-200 hover:bg-red-50">
-            <Trash2 size={12} />
->>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
           </button>
         )}
       </div>
@@ -651,7 +642,6 @@ const UploadForm = ({ onSuccess }) => {
             </div>
             <div>
               <label className="label">Week Number</label>
-<<<<<<< HEAD
               <input className="input" type="number" min="1" max="52" placeholder="3" value={form.week} onChange={set('week')} onKeyDown={(e) => { if (!/[0-9]/.test(e.key) && !['Backspace', 'ArrowLeft', 'ArrowRight', 'Tab', 'Delete', 'Enter'].includes(e.key)) e.preventDefault(); }} />
             </div>
             <div>
@@ -661,17 +651,6 @@ const UploadForm = ({ onSuccess }) => {
             <div>
               <label className="label">Version</label>
               <input className="input" type="number" step="0.1" min="0" placeholder="1.0" value={form.version} onChange={set('version')} onKeyDown={(e) => { if (!/[0-9.]/.test(e.key) && !['Backspace', 'ArrowLeft', 'ArrowRight', 'Tab', 'Delete', 'Enter'].includes(e.key)) e.preventDefault(); }} />
-=======
-              <input className="input" type="number" min="1" max="52" placeholder="3" value={form.week} onChange={set('week')} />
-            </div>
-            <div>
-              <label className="label">Academic Year</label>
-              <input className="input" placeholder="2025" value={form.academicYear} onChange={set('academicYear')} />
-            </div>
-            <div>
-              <label className="label">Version</label>
-              <input className="input" placeholder="1.0" value={form.version} onChange={set('version')} />
->>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
             </div>
             <div>
               <label className="label flex items-center gap-1"><Tag size={12} /> Tags (comma-separated)</label>
@@ -952,11 +931,7 @@ export default function MaterialsPage() {
           {tab === 'moderation' && (
             <div className="card py-4">
               <div className="flex flex-wrap gap-2">
-<<<<<<< HEAD
                 {['pending', 'approved', 'archived', 'deleted'].map((s) => (
-=======
-                {['pending', 'approved', 'archived'].map((s) => (
->>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
                   <button
                     key={s}
                     onClick={() => { setFilterStatus(s); setPage(1); }}
@@ -964,10 +939,7 @@ export default function MaterialsPage() {
                       filterStatus === s
                         ? s === 'pending'   ? 'bg-amber-500 text-white border-amber-500'
                           : s === 'approved' ? 'bg-emerald-600 text-white border-emerald-600'
-<<<<<<< HEAD
                           : s === 'deleted' ? 'bg-red-600 text-white border-red-600'
-=======
->>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
                           : 'bg-gray-600 text-white border-gray-600'
                         : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
                     }`}

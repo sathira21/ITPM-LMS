@@ -21,10 +21,7 @@ const STATUS_META = {
   draft:     { color: 'bg-gray-100 text-gray-600 border-gray-200', label: 'Draft', icon: Lock },
   published: { color: 'bg-emerald-100 text-emerald-700 border-emerald-200', label: 'Published', icon: Globe },
   archived:  { color: 'bg-orange-100 text-orange-700 border-orange-200', label: 'Archived', icon: Archive },
-<<<<<<< HEAD
   deleted:   { color: 'bg-red-100 text-red-700 border-red-200', label: 'Deleted', icon: Trash2 },
-=======
->>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
 };
 
 const TABS = [
@@ -122,15 +119,9 @@ const CourseCard = ({ course, role, onView, onEdit, onEnroll, onPublish, onArchi
                 <Globe size={12} />
               </button>
             )}
-<<<<<<< HEAD
             {['admin', 'teacher'].includes(role) && (
               <button onClick={() => onDelete(course._id)} className="btn-secondary py-2 text-xs text-red-500 border-red-200 hover:bg-red-50">
                 <Trash2 size={12} /> Delete
-=======
-            {role === 'admin' && (
-              <button onClick={() => onDelete(course._id)} className="btn-secondary py-2 text-xs text-red-500 border-red-200 hover:bg-red-50">
-                <Trash2 size={12} />
->>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
               </button>
             )}
           </>
@@ -230,29 +221,17 @@ const CourseForm = ({ course, onSuccess, onCancel }) => {
 
             <div>
               <label className="label">Credits</label>
-<<<<<<< HEAD
               <input className="input" type="number" min="0" placeholder="e.g. 3" value={form.credits} onChange={set('credits')} onKeyDown={(e) => { if (!/[0-9]/.test(e.key) && !['Backspace', 'ArrowLeft', 'ArrowRight', 'Tab', 'Delete', 'Enter'].includes(e.key)) e.preventDefault(); }} />
-=======
-              <input className="input" type="number" min="0" placeholder="e.g. 3" value={form.credits} onChange={set('credits')} />
->>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
             </div>
 
             <div>
               <label className="label">Max Students (0 = unlimited)</label>
-<<<<<<< HEAD
               <input className="input" type="number" min="0" placeholder="e.g. 50" value={form.maxStudents} onChange={set('maxStudents')} onKeyDown={(e) => { if (!/[0-9]/.test(e.key) && !['Backspace', 'ArrowLeft', 'ArrowRight', 'Tab', 'Delete', 'Enter'].includes(e.key)) e.preventDefault(); }} />
-=======
-              <input className="input" type="number" min="0" placeholder="e.g. 50" value={form.maxStudents} onChange={set('maxStudents')} />
->>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
             </div>
 
             <div>
               <label className="label">Academic Year</label>
-<<<<<<< HEAD
               <input className="input" type="number" min="1900" max="2100" placeholder="e.g. 2025" value={form.academicYear} onChange={set('academicYear')} onKeyDown={(e) => { if (!/[0-9]/.test(e.key) && !['Backspace', 'ArrowLeft', 'ArrowRight', 'Tab', 'Delete', 'Enter'].includes(e.key)) e.preventDefault(); }} />
-=======
-              <input className="input" placeholder="e.g. 2025" value={form.academicYear} onChange={set('academicYear')} />
->>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
             </div>
 
             <div>
@@ -1096,10 +1075,7 @@ export default function CoursesPage() {
                     <option value="draft">Draft</option>
                     <option value="published">Published</option>
                     <option value="archived">Archived</option>
-<<<<<<< HEAD
                     <option value="deleted">Deleted</option>
-=======
->>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
                   </select>
                 )}
               </div>

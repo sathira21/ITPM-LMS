@@ -51,11 +51,7 @@ const courseSchema = new mongoose.Schema(
     // Status
     status: {
       type: String,
-<<<<<<< HEAD
       enum: ['draft', 'published', 'archived', 'deleted'],
-=======
-      enum: ['draft', 'published', 'archived'],
->>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
       default: 'draft',
     },
 
