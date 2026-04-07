@@ -1,0 +1,54 @@
+﻿node : C:\Users\Chanuque\Do
+cuments\GitHub\ITPM-LMS\bac
+kend\routes\materials.js:55
+At line:1 char:1
++ node server.js 2>&1 | 
+Out-File -Encoding utf8 
+out-utf8.txt
++ ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo         
+     : NotSpecified: (C:\  
+  Users\Chanuq...materia   
+ ls.js:55:String) [], R    
+emoteException
+    + FullyQualifiedErrorI 
+   d : NativeCommandError
+ 
+<<<<<<< HEAD
+^^
+
+SyntaxError: Unexpected 
+token '<<'
+    at wrapSafe (node:inter
+nal/modules/cjs/loader:1692
+:18)
+    at Module._compile (nod
+e:internal/modules/cjs/load
+er:1735:20)
+    at Object..js (node:int
+ernal/modules/cjs/loader:18
+93:10)
+    at Module.load (node:in
+ternal/modules/cjs/loader:1
+481:32)
+    at Module._load (node:i
+nternal/modules/cjs/loader:
+1300:12)
+    at 
+TracingChannel.traceSync (n
+ode:diagnostics_channel:328
+:14)
+    at wrapModuleLoad (node
+:internal/modules/cjs/loade
+r:245:24)
+    at Module.require (node
+:internal/modules/cjs/loade
+r:1504:12)
+    at require (node:intern
+al/modules/helpers:152:16)
+    at Object.<anonymous> (
+C:\Users\Chanuque\Documents
+\GitHub\ITPM-LMS\backend\se
+rver.js:67:28)
+
+Node.js v24.13.0
