@@ -33,9 +33,14 @@ exports.getQuizzes = async (req, res) => {
 
     const total = await Quiz.countDocuments(query);
 <<<<<<< HEAD
+<<<<<<< HEAD
     const quizzes = await Quiz.find(query)
       .populate('createdBy', 'name email')
       .select('-questions.correctAnswer -questions.explanation')
+=======
+    const quizzesQuery = Quiz.find(query)
+      .populate('createdBy', 'name email')
+>>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
 =======
     const quizzesQuery = Quiz.find(query)
       .populate('createdBy', 'name email')
@@ -45,13 +50,19 @@ exports.getQuizzes = async (req, res) => {
       .limit(Number(limit));
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
     if (req.user && req.user.role === 'student') {
       quizzesQuery.select('-questions.correctAnswer -questions.explanation');
     }
 
     const quizzes = await quizzesQuery;
 
+<<<<<<< HEAD
+>>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
+=======
 >>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
     let result = quizzes.map(q => q.toObject());
 
