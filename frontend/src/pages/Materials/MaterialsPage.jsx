@@ -641,6 +641,7 @@ const UploadForm = ({ onSuccess }) => {
             </div>
             <div>
               <label className="label">Week Number</label>
+<<<<<<< HEAD
               <input className="input" type="number" min="1" max="52" placeholder="3" value={form.week} onChange={set('week')} onKeyDown={(e) => { if (!/[0-9]/.test(e.key) && !['Backspace', 'ArrowLeft', 'ArrowRight', 'Tab', 'Delete', 'Enter'].includes(e.key)) e.preventDefault(); }} />
             </div>
             <div>
@@ -650,6 +651,17 @@ const UploadForm = ({ onSuccess }) => {
             <div>
               <label className="label">Version</label>
               <input className="input" type="number" step="0.1" min="0" placeholder="1.0" value={form.version} onChange={set('version')} onKeyDown={(e) => { if (!/[0-9.]/.test(e.key) && !['Backspace', 'ArrowLeft', 'ArrowRight', 'Tab', 'Delete', 'Enter'].includes(e.key)) e.preventDefault(); }} />
+=======
+              <input className="input" type="number" min="1" max="52" placeholder="3" value={form.week} onChange={set('week')} />
+            </div>
+            <div>
+              <label className="label">Academic Year</label>
+              <input className="input" placeholder="2025" value={form.academicYear} onChange={set('academicYear')} />
+            </div>
+            <div>
+              <label className="label">Version</label>
+              <input className="input" placeholder="1.0" value={form.version} onChange={set('version')} />
+>>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
             </div>
             <div>
               <label className="label flex items-center gap-1"><Tag size={12} /> Tags (comma-separated)</label>
