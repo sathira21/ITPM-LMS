@@ -32,13 +32,27 @@ exports.getQuizzes = async (req, res) => {
     ];
 
     const total = await Quiz.countDocuments(query);
+<<<<<<< HEAD
     const quizzes = await Quiz.find(query)
       .populate('createdBy', 'name email')
       .select('-questions.correctAnswer -questions.explanation')
+=======
+    const quizzesQuery = Quiz.find(query)
+      .populate('createdBy', 'name email')
+>>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(Number(limit));
 
+<<<<<<< HEAD
+=======
+    if (req.user && req.user.role === 'student') {
+      quizzesQuery.select('-questions.correctAnswer -questions.explanation');
+    }
+
+    const quizzes = await quizzesQuery;
+
+>>>>>>> 8f54b83a05307a036d201ab39d454d284dec54ae
     let result = quizzes.map(q => q.toObject());
 
     if (req.user.role === 'student') {
