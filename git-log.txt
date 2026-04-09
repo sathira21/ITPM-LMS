@@ -1,0 +1,46 @@
+commit ae90a173239101fe876a78a7cc3847f75ea53743
+Author: chanuque <105690860+chanuque@users.noreply.github.com>
+Date:   Tue Apr 7 13:16:46 2026 +0530
+
+    Resolve merge conflicts and unify delete behavior
+    
+    Removed merge conflict markers and reconciled changes across backend and frontend. Key updates: implement/standardize soft-delete flow in controllers (set status = 'deleted'), unify delete route authorizations, adjust model/enums and frontend status lists, refine form input handling and quiz UI (preview, time limit and validation tweaks), and add backend diagnostic output files (out*.txt). These changes restore buildability and harmonize differing branches' behaviors.
+
+ backend/controllers/courseController.js        |   4 --
+ backend/controllers/materialController.js      |   8 ----
+ backend/controllers/quizController.js          |  10 -----
+ backend/models/Course.js                       |   4 --
+ backend/models/Material.js                     |   4 --
+ backend/out-utf8.txt                           |  54 ++++++++++++++++++++++++
+ backend/out.txt                                | Bin 0 -> 2306 bytes
+ backend/out3.txt                               |  17 ++++++++
+ backend/out_backend.txt                        |  17 ++++++++
+ backend/routes/courses.js                      |   4 --
+ backend/routes/materials.js                    |   4 --
+ frontend/src/pages/Courses/CoursesPage.jsx     |  24 -----------
+ frontend/src/pages/Materials/MaterialsPage.jsx |  28 -------------
+ frontend/src/pages/Quiz/QuizPage.jsx           |  55 -------------------------
+ 14 files changed, 88 insertions(+), 145 deletions(-)
+
+commit a7caf2eb15fab55930db5a65c2e4e3ecbbbfefd7
+Merge: 063a071 8f54b83
+Author: chanuque <105690860+chanuque@users.noreply.github.com>
+Date:   Tue Apr 7 11:48:14 2026 +0530
+
+    Add .gitignore, quiz preview
+    
+    Adds a new .gitignore and a set of files. Introduces a Quiz preview UI and related frontend changes (preview modal, preview button, additional validation, default time limit) and adjusts quiz listing to conditionally hide correct answers/explanations for students. Updates Courses and Materials pages to show a 'deleted' status and restrict delete actions to admins in the UI. Backend changes include competing delete flows (soft-delete via status='deleted' vs hard delete and physical file removal) and corresponding model enum changes to include 'deleted'. Routes were tightened to limit delete to admins in some places. Note: this diff contains unresolved merge conflict markers (<<<<<<<, =======, >>>>>>>) that must be resolved before merging.
+
+commit 063a071bf69801eccb8d20144adf920344a7eb58
+Author: chanuque <105690860+chanuque@users.noreply.github.com>
+Date:   Tue Apr 7 11:41:16 2026 +0530
+
+    Add commit-generation and diagnostic scripts
+    
+    Introduce four utility scripts: generate_commits.js creates a synthetic commit history (multiple authors, configurable date range, adds/deletes, writes seed files to backend/seedData and commits with GIT_AUTHOR_DATE/GIT_COMMITTER_DATE over 7 commits per author); diag.js runs git add and prints staged --numstat for diagnostics; diag2.js executes an ultimate_rebuild script and reports failures; measure.js writes a .gitignore, stages/resets files, makes a 'measure' commit and prints the latest commit --stat and --numstat. These tools are intended to generate and inspect a controlled repository history for testing/measurement.
+
+ diag.js             |   8 ++++
+ diag2.js            |   6 +++
+ generate_commits.js | 125 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ measure.js          |  14 ++++++
+ 4 files changed, 153 insertions(+)

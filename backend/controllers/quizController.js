@@ -43,7 +43,6 @@ exports.getQuizzes = async (req, res) => {
     }
 
     const quizzes = await quizzesQuery;
-
     let result = quizzes.map(q => q.toObject());
 
     if (req.user.role === 'student') {
