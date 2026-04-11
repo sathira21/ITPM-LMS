@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const ContentProgress = require('../models/ContentProgress');
 const Material = require('../models/Material');
 const User = require('../models/User');
@@ -317,6 +318,13 @@ exports.getMyMaterialProgress = async (req, res) => {
 // @access  Admin, Teacher
 exports.getAnalyticsOverview = async (req, res) => {
   try {
+    const activeStudents = await User.find({ role: 'student', isActive: true }).select('_id');
+    const activeStudentIds = activeStudents.map(s => s._id);
+    
+    // Fetch all published courses to constrain metrics to actual curriculum
+    const allCourses = await Course.find({ status: 'published' }).select('modules enrolledStudents');
+    const publishedCourseIds = allCourses.map(c => c._id);
+
     const [
       totalStudents,
       totalMaterials,
@@ -329,6 +337,12 @@ exports.getAnalyticsOverview = async (req, res) => {
       User.countDocuments({ role: 'student', isActive: true }),
       Material.countDocuments({ status: 'approved' }),
       ContentProgress.aggregate([
+        { 
+          $match: { 
+            student: { $in: activeStudentIds },
+            course: { $in: publishedCourseIds }
+          } 
+        },
         {
           $group: {
             _id: '$status',
@@ -338,7 +352,13 @@ exports.getAnalyticsOverview = async (req, res) => {
         },
       ]),
       ContentProgress.aggregate([
-        { $match: { status: 'completed' } },
+        { 
+          $match: { 
+            status: 'completed',
+            student: { $in: activeStudentIds },
+            course: { $in: publishedCourseIds }
+          } 
+        },
         {
           $lookup: {
             from: 'materials',
@@ -358,6 +378,12 @@ exports.getAnalyticsOverview = async (req, res) => {
         { $limit: 10 },
       ]),
       ContentProgress.aggregate([
+        { 
+          $match: { 
+            student: { $in: activeStudentIds },
+            course: { $in: publishedCourseIds }
+          } 
+        },
         {
           $group: {
             _id: '$material',
@@ -382,8 +408,20 @@ exports.getAnalyticsOverview = async (req, res) => {
         {
           $lookup: {
             from: 'contentprogresses',
-            localField: '_id',
-            foreignField: 'material',
+            let: { matId: '$_id' },
+            pipeline: [
+              { 
+                $match: { 
+                  $expr: { 
+                    $and: [
+                      { $eq: ['$material', '$$matId'] },
+                      { $in: ['$student', activeStudentIds] },
+                      { $in: ['$course', publishedCourseIds] }
+                    ]
+                  } 
+                } 
+              }
+            ],
             as: 'progress',
           },
         },
@@ -397,7 +435,11 @@ exports.getAnalyticsOverview = async (req, res) => {
         { $sort: { viewCount: 1 } },
         { $limit: 5 },
       ]),
-      ContentProgress.find({ status: 'completed' })
+      ContentProgress.find({ 
+        status: 'completed',
+        student: { $in: activeStudentIds },
+        course: { $in: publishedCourseIds }
+      })
         .populate('student', 'name email')
         .populate('material', 'title subject')
         .sort({ completedAt: -1 })
@@ -410,8 +452,20 @@ exports.getAnalyticsOverview = async (req, res) => {
     const totalTimeSpent = progressStats.reduce((sum, p) => sum + (p.totalTime || 0), 0);
     const totalProgressRecords = progressStats.reduce((sum, p) => sum + p.count, 0);
 
-    const potentialRecords = totalStudents * totalMaterials;
-    const notStartedCount = potentialRecords - completedCount - inProgressCount;
+    // Calculate potential completions based on ACTUAL enrollments
+    let potentialRecords = 0;
+    allCourses.forEach(course => {
+      const activeEnrolledCount = course.enrolledStudents.filter(e => e.status === 'active').length;
+      const uniqueMaterialsInCourse = new Set(course.modules.flatMap(m => m.materials.map(mat => mat.toString()))).size;
+      potentialRecords += activeEnrolledCount * uniqueMaterialsInCourse;
+    });
+
+    // If no enrollments exist, fallback to total students * total materials (legacy behavior)
+    if (potentialRecords === 0) {
+      potentialRecords = totalStudents * totalMaterials;
+    }
+
+    const notStartedCount = Math.max(0, potentialRecords - completedCount - inProgressCount);
 
     res.json({
       success: true,
@@ -489,25 +543,59 @@ exports.getStudentAnalytics = async (req, res) => {
       progressMap[p._id.toString()] = p;
     });
 
+    // Fetch all courses to determine material denominators per student
+    const allCourses = await Course.find({ status: 'published' }).select('modules enrolledStudents');
+
+    // Create Student Material Sets for filtering and denominator calculation
+    const studentMaterialSets = {};
+    studentIds.forEach(id => {
+      const studentIdStr = id.toString();
+      const materialSet = new Set();
+      allCourses.forEach(course => {
+        const isEnrolled = course.enrolledStudents.some(
+          e => e.student && e.student.toString() === studentIdStr && e.status === 'active'
+        );
+        if (isEnrolled) {
+          course.modules.forEach(mod => {
+            mod.materials.forEach(matId => { if (matId) materialSet.add(matId.toString()); });
+          });
+        }
+      });
+      studentMaterialSets[studentIdStr] = materialSet;
+    });
+
+    // Fetch progress details to filter completions by enrollment
+    const allProgressRecords = await ContentProgress.find({ student: { $in: studentIds }, status: 'completed' }).select('student material');
+
     let result = students.map(s => {
-      const progress = progressMap[s._id.toString()] || {
+      const studentIdStr = s._id.toString();
+      const progressSummary = progressMap[studentIdStr] || {
         totalViewed: 0,
         completed: 0,
         inProgress: 0,
         totalTimeSpent: 0,
         lastActivity: null,
       };
+      
+      const enrolledMaterialIds = studentMaterialSets[studentIdStr] || new Set();
+      const denominator = enrolledMaterialIds.size || totalMaterials; 
+      
+      // Only count completions for materials the student is actually enrolled in
+      const studentCompletions = allProgressRecords.filter(p => 
+        p.student.toString() === studentIdStr && enrolledMaterialIds.has(p.material.toString())
+      ).length;
+      
       return {
         _id: s._id,
         name: s.name,
         email: s.email,
         studentId: s.studentId,
-        totalViewed: progress.totalViewed,
-        completed: progress.completed,
-        inProgress: progress.inProgress,
-        totalTimeSpent: progress.totalTimeSpent,
-        lastActivity: progress.lastActivity,
-        completionPercentage: totalMaterials > 0 ? Math.round((progress.completed / totalMaterials) * 100) : 0,
+        totalViewed: progressSummary.totalViewed,
+        completed: studentCompletions,
+        inProgress: progressSummary.inProgress,
+        totalTimeSpent: progressSummary.totalTimeSpent,
+        lastActivity: progressSummary.lastActivity,
+        completionPercentage: denominator > 0 ? Math.round((studentCompletions / denominator) * 100) : 0,
       };
     });
 
@@ -550,20 +638,38 @@ exports.getStudentDetailedProgress = async (req, res) => {
       .populate('material', 'title subject module fileType')
       .sort({ lastViewedAt: -1 });
 
+    const studentCourses = await Course.find({ 
+      'enrolledStudents.student': studentId,
+      'enrolledStudents.status': 'active',
+      status: 'published'
+    }).select('modules');
+    
+    const enrolledMaterialIds = new Set();
+    studentCourses.forEach(course => {
+      course.modules.forEach(mod => {
+        mod.materials.forEach(matId => enrolledMaterialIds.add(matId.toString()));
+      });
+    });
+
     const totalMaterials = await Material.countDocuments({ status: 'approved' });
-    const completedCount = progress.filter(p => p.status === 'completed').length;
-    const totalTimeSpent = progress.reduce((sum, p) => sum + p.totalTimeSpent, 0);
+    const enrolledMaterialCount = enrolledMaterialIds.size || totalMaterials;
+    
+    // Accuracy Fix: Only count progress for materials the student is actually enrolled in
+    const enrolledProgress = progress.filter(p => enrolledMaterialIds.size === 0 || enrolledMaterialIds.has(p.material._id.toString()));
+    const completedCount = enrolledProgress.filter(p => p.status === 'completed').length;
+    const inProgressCount = enrolledProgress.filter(p => p.status === 'in_progress').length;
+    const totalTimeSpent = enrolledProgress.reduce((sum, p) => sum + (p.totalTimeSpent || 0), 0);
 
     res.json({
       success: true,
       data: {
         student,
-        progress,
+        progress: enrolledProgress,
         summary: {
-          totalMaterials,
+          totalMaterials: enrolledMaterialCount,
           completed: completedCount,
-          inProgress: progress.filter(p => p.status === 'in_progress').length,
-          completionPercentage: totalMaterials > 0 ? Math.round((completedCount / totalMaterials) * 100) : 0,
+          inProgress: inProgressCount,
+          completionPercentage: enrolledMaterialCount > 0 ? Math.round((completedCount / enrolledMaterialCount) * 100) : 0,
           totalTimeSpent,
         },
       },
@@ -600,12 +706,30 @@ exports.getMaterialAnalytics = async (req, res) => {
       {
         $group: {
           _id: '$material',
-          uniqueViewers: { $sum: 1 },
+          viewerIds: { $addToSet: '$student' },
           totalViews: { $sum: '$viewCount' },
-          completions: { $sum: { $cond: [{ $eq: ['$status', 'completed'] }, 1, 0] } },
+          completedStudentIds: { $addToSet: { $cond: [{ $eq: ['$status', 'completed'] }, '$student', null] } },
           totalTimeSpent: { $sum: '$totalTimeSpent' },
         },
       },
+      {
+        $project: {
+          _id: 1,
+          totalViews: 1,
+          totalTimeSpent: 1,
+          uniqueViewers: { $size: '$viewerIds' },
+          // filter out the null that $cond might have added to the set
+          completions: {
+            $size: {
+              $filter: {
+                input: '$completedStudentIds',
+                as: 'id',
+                cond: { $ne: ['$$id', null] }
+              }
+            }
+          }
+        }
+      }
     ]);
 
     const progressMap = {};
@@ -630,7 +754,7 @@ exports.getMaterialAnalytics = async (req, res) => {
         uniqueViewers: progress.uniqueViewers,
         totalViews: progress.totalViews,
         completions: progress.completions,
-        completionRate: totalStudents > 0 ? Math.round((progress.completions / totalStudents) * 100) : 0,
+        completionRate: totalStudents > 0 ? Math.min(100, Math.round((progress.completions / totalStudents) * 100)) : 0,
         averageTimeSpent: progress.uniqueViewers > 0 ? Math.round(progress.totalTimeSpent / progress.uniqueViewers) : 0,
       };
     });
@@ -674,25 +798,78 @@ exports.getMaterialDetailedAnalytics = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Material not found' });
     }
 
-    const progress = await ContentProgress.find({ material: materialId })
-      .populate('student', 'name email studentId')
-      .sort({ lastViewedAt: -1 });
+    const materialIdObj = new mongoose.Types.ObjectId(materialId);
+
+    const progressAggregation = await ContentProgress.aggregate([
+      { $match: { material: materialIdObj } },
+      { $sort: { lastViewedAt: -1 } },
+      {
+        $group: {
+          _id: '$student',
+          status: { 
+            // Pick 'completed' if any record is completed
+            $max: {
+              $cond: [{ $eq: ['$status', 'completed'] }, 2, { $cond: [{ $eq: ['$status', 'in_progress'] }, 1, 0] }]
+            }
+          },
+          viewCount: { $sum: '$viewCount' },
+          totalTimeSpent: { $sum: '$totalTimeSpent' },
+          lastViewedAt: { $max: '$lastViewedAt' }
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'student'
+        }
+      },
+      { $unwind: '$student' },
+      {
+        $project: {
+          _id: 1,
+          viewCount: 1,
+          totalTimeSpent: 1,
+          lastViewedAt: 1,
+          'student.name': 1,
+          'student.email': 1,
+          'student.studentId': 1,
+          status: {
+            $switch: {
+              branches: [
+                { case: { $eq: ['$status', 2] }, then: 'completed' },
+                { case: { $eq: ['$status', 1] }, then: 'in_progress' }
+              ],
+              default: 'not_started'
+            }
+          }
+        }
+      },
+      { $sort: { lastViewedAt: -1 } }
+    ]);
 
     const totalStudents = await User.countDocuments({ role: 'student', isActive: true });
-    const completedCount = progress.filter(p => p.status === 'completed').length;
-    const totalTimeSpent = progress.reduce((sum, p) => sum + p.totalTimeSpent, 0);
+    
+    // Count unique students who completed this material
+    const completedCount = progressAggregation.filter(p => p.status === 'completed').length;
+    
+    // Count unique viewers
+    const uniqueViewers = progressAggregation.length;
+    
+    const totalTimeSpentTotal = progressAggregation.reduce((sum, p) => sum + (p.totalTimeSpent || 0), 0);
 
     res.json({
       success: true,
       data: {
         material,
-        progress,
+        progress: progressAggregation,
         summary: {
           totalStudents,
-          uniqueViewers: progress.length,
+          uniqueViewers,
           completions: completedCount,
-          completionRate: totalStudents > 0 ? Math.round((completedCount / totalStudents) * 100) : 0,
-          averageTimeSpent: progress.length > 0 ? Math.round(totalTimeSpent / progress.length) : 0,
+          completionRate: totalStudents > 0 ? Math.min(100, Math.round((completedCount / totalStudents) * 100)) : 0,
+          averageTimeSpent: uniqueViewers > 0 ? Math.round(totalTimeSpentTotal / uniqueViewers) : 0,
         },
       },
     });
@@ -1079,10 +1256,11 @@ exports.getCourseAnalytics = async (req, res) => {
       let studentsCompleted = 0;
 
       enrolledStudents.forEach(enrollment => {
+        if (!enrollment.student) return; // Skip if student not found
         let studentCompleted = 0;
         materialIds.forEach(matId => {
           // Use course-specific key
-          const key = `${enrollment.student}-${course._id.toString()}-${matId}`;
+          const key = `${enrollment.student._id}-${course._id.toString()}-${matId}`;
           const prog = progressMap[key];
           if (prog?.status === 'completed') {
             totalCompletions++;
@@ -1139,8 +1317,10 @@ exports.getCourseDetailedAnalytics = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Course not found' });
     }
 
-    const materialIds = course.modules.flatMap(m => m.materials.map(mat => mat._id));
-    const enrolledStudents = course.enrolledStudents.filter(e => e.status === 'active');
+    // Deduplicate material IDs to ensure accurate weighting
+    const materialIds = [...new Set(course.modules.flatMap(m => m.materials.map(mat => mat._id.toString())))];
+
+    const enrolledStudents = course.enrolledStudents.filter(e => e.status === 'active' && e.student);
     const studentIds = enrolledStudents.map(e => e.student._id);
 
     // Get all progress for these students and materials IN THIS COURSE

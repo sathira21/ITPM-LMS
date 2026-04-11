@@ -879,6 +879,131 @@ const CourseDetailModal = ({ courseId, onClose }) => {
   );
 };
 
+/* ─── Material Detail Modal ─── */
+const MaterialDetailModal = ({ materialId, onClose }) => {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDetail = async () => {
+      try {
+        const { data } = await api.get(`/progress/analytics/materials/${materialId}`);
+        setData(data.data);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDetail();
+  }, [materialId]);
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-start justify-center overflow-y-auto p-4">
+      <div className="w-full max-w-4xl my-8 bg-white rounded-3xl shadow-2xl">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-gray-100">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900">Content Engagement Detail</h2>
+            {data?.material && (
+              <p className="text-sm text-gray-500 mt-0.5">
+                <span className="font-semibold text-primary-600">{data.material.title}</span> · {data.material.subject}
+              </p>
+            )}
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-xl transition-colors">
+            <X size={20} className="text-gray-500" />
+          </button>
+        </div>
+
+        {/* Content */}
+        {loading ? (
+          <div className="flex items-center justify-center h-48">
+            <div className="w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : data ? (
+          <div className="p-6 space-y-6">
+            {/* Summary Stats */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="bg-gray-50 rounded-xl p-4 text-center">
+                <p className="text-2xl font-black text-gray-900">{data.summary.completionRate}%</p>
+                <p className="text-xs text-gray-500">Completion Rate</p>
+              </div>
+              <div className="bg-blue-50 rounded-xl p-4 text-center">
+                <p className="text-2xl font-black text-blue-700">{data.summary.uniqueViewers}</p>
+                <p className="text-xs text-gray-500">Unique Viewers</p>
+              </div>
+              <div className="bg-emerald-50 rounded-xl p-4 text-center">
+                <p className="text-2xl font-black text-emerald-700">{data.summary.completions}</p>
+                <p className="text-xs text-gray-500">Total Completions</p>
+              </div>
+              <div className="bg-violet-50 rounded-xl p-4 text-center">
+                <p className="text-2xl font-black text-violet-700">{formatTime(data.summary.averageTimeSpent)}</p>
+                <p className="text-xs text-gray-500">Avg Time</p>
+              </div>
+            </div>
+
+            {/* Student Log */}
+            <div>
+              <h3 className="font-semibold text-gray-800 mb-3">Student Engagement Log</h3>
+              <div className="max-h-96 overflow-y-auto">
+                <table className="w-full text-sm">
+                  <thead className="bg-gray-50 sticky top-0">
+                    <tr>
+                      <th className="text-left p-3 font-semibold text-gray-600">Student</th>
+                      <th className="text-center p-3 font-semibold text-gray-600">Status</th>
+                      <th className="text-center p-3 font-semibold text-gray-600">Views</th>
+                      <th className="text-center p-3 font-semibold text-gray-600">Time Spent</th>
+                      <th className="text-right p-3 font-semibold text-gray-600">Last Viewed</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.progress?.map((p) => (
+                      <tr key={p._id} className="border-b border-gray-100">
+                        <td className="p-3">
+                          <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center text-white font-bold text-xs">
+                              {p.student?.name?.charAt(0)}
+                            </div>
+                            <div>
+                              <p className="font-medium text-gray-800">{p.student?.name}</p>
+                              <p className="text-[10px] text-gray-400">{p.student?.studentId}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="p-3 text-center">
+                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                            p.status === 'completed' ? 'bg-emerald-100 text-emerald-700' : 
+                            p.status === 'in_progress' ? 'bg-blue-100 text-blue-700' : 
+                            'bg-gray-100 text-gray-500'
+                          }`}>
+                            {p.status === 'completed' ? <CheckCircle2 size={10} /> : <Clock size={10} />}
+                            {p.status?.replace('_', ' ')}
+                          </span>
+                        </td>
+                        <td className="p-3 text-center text-gray-700 font-medium">{p.viewCount}</td>
+                        <td className="p-3 text-center text-gray-600">{formatTime(p.totalTimeSpent)}</td>
+                        <td className="p-3 text-right text-gray-400 text-xs">
+                          {p.lastViewedAt ? new Date(p.lastViewedAt).toLocaleDateString() : '—'}
+                        </td>
+                      </tr>
+                    ))}
+                    {!data.progress?.length && (
+                      <tr className="border-b border-gray-100">
+                        <td colSpan="5" className="p-12 text-center text-gray-400">
+                          No student activity recorded for this content yet.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+};
+
 /* ─── Student Detail Modal ─── */
 const StudentDetailModal = ({ studentId, onClose }) => {
   const [data, setData] = useState(null);
@@ -1066,6 +1191,9 @@ export default function ProgressDashboard() {
       )}
       {selectedCourse && (
         <CourseDetailModal courseId={selectedCourse} onClose={() => setSelectedCourse(null)} />
+      )}
+      {selectedMaterial && (
+        <MaterialDetailModal materialId={selectedMaterial} onClose={() => setSelectedMaterial(null)} />
       )}
     </div>
   );
