@@ -16,13 +16,14 @@ exports.getQuizzes = async (req, res) => {
 
     if (req.user.role === 'student') {
       query.isPublished = true;
-    } else if (req.user.role === 'teacher') {
+    } else if (req.user.role === 'teacher' || req.user.role === 'admin') {
+      // Teachers and Admins can see all quizzes in the systems by default
       if (filter === 'mine') query.createdBy = req.user._id;
-      else query.$or = [{ createdBy: req.user._id }, { isPublished: true }];
+      // No extra restrictions for 'all' view to allow managing any quiz
     }
 
     if (filter === 'published' && req.user.role !== 'student') query.isPublished = true;
-    if (filter === 'draft' && req.user.role !== 'student') { query.isPublished = false; query.createdBy = req.user._id; }
+    if (filter === 'draft' && req.user.role !== 'student') query.isPublished = false;
     if (subject) query.subject = { $regex: subject, $options: 'i' };
     if (mod)     query.module  = { $regex: mod, $options: 'i' };
     if (search)  query.$or = [
@@ -120,7 +121,7 @@ exports.updateQuiz = async (req, res) => {
   try {
     const quiz = await Quiz.findById(req.params.id);
     if (!quiz) return res.status(404).json({ success: false, message: 'Quiz not found' });
-    if (req.user.role !== 'admin' && quiz.createdBy.toString() !== req.user._id.toString()) {
+    if (req.user.role !== 'admin' && req.user.role !== 'teacher' && quiz.createdBy.toString() !== req.user._id.toString()) {
       return res.status(403).json({ success: false, message: 'Not authorized' });
     }
     const fields = ['title', 'description', 'subject', 'module', 'group', 'questions', 'timeLimit', 'passingScore', 'allowRetake', 'maxAttempts', 'dueDate', 'isPublished'];
@@ -138,7 +139,7 @@ exports.deleteQuiz = async (req, res) => {
   try {
     const quiz = await Quiz.findById(req.params.id);
     if (!quiz) return res.status(404).json({ success: false, message: 'Quiz not found' });
-    if (req.user.role !== 'admin' && quiz.createdBy.toString() !== req.user._id.toString()) {
+    if (req.user.role !== 'admin' && req.user.role !== 'teacher' && quiz.createdBy.toString() !== req.user._id.toString()) {
       return res.status(403).json({ success: false, message: 'Not authorized' });
     }
     await Quiz.findByIdAndDelete(req.params.id);
@@ -154,7 +155,7 @@ exports.publishQuiz = async (req, res) => {
   try {
     const quiz = await Quiz.findById(req.params.id);
     if (!quiz) return res.status(404).json({ success: false, message: 'Quiz not found' });
-    if (req.user.role !== 'admin' && quiz.createdBy.toString() !== req.user._id.toString()) {
+    if (req.user.role !== 'admin' && req.user.role !== 'teacher' && quiz.createdBy.toString() !== req.user._id.toString()) {
       return res.status(403).json({ success: false, message: 'Not authorized' });
     }
     quiz.isPublished = !quiz.isPublished;
